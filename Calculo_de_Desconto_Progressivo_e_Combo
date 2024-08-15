@@ -1,0 +1,89 @@
+import java.util.Scanner;
+
+class Servico {
+    private double valor;
+
+    public Servico(double valor) {
+        this.valor = valor;
+    }
+
+    public double getValor() {
+        return valor;
+    }
+}
+
+class Combo {
+    private Servico telefonia;
+    private Servico bandaLarga;
+    private Servico tvPorAssinatura;
+    private double desconto1;
+    private double desconto2;
+    private double desconto3;
+
+    public Combo(double valorTelefonia, double valorBandaLarga, double valorTV, double desconto1, double desconto2, double desconto3) {
+        this.telefonia = new Servico(valorTelefonia);
+        this.bandaLarga = new Servico(valorBandaLarga);
+        this.tvPorAssinatura = new Servico(valorTV);
+        this.desconto1 = desconto1;
+        this.desconto2 = desconto2;
+        this.desconto3 = desconto3;
+    }
+
+    public double calcularValorTotal() {
+        double valorTotal = telefonia.getValor() + bandaLarga.getValor() + tvPorAssinatura.getValor();
+        int numeroDeServicos = contarServicosContratados();
+
+        double desconto = 0.0;
+        if (numeroDeServicos == 1) {
+            desconto = desconto1;
+        } else if (numeroDeServicos == 2) {
+            desconto = desconto2;
+        } else if (numeroDeServicos == 3) {
+            desconto = desconto3;
+        }
+
+        valorTotal -= valorTotal * (desconto / 100);
+
+        // Aplicar desconto especial se todos os três serviços foram contratados
+        if (numeroDeServicos == 3) {
+            valorTotal -= 20.0;
+        }
+
+        return valorTotal;
+    }
+
+    private int contarServicosContratados() {
+        int count = 0;
+        if (telefonia.getValor() > 0) count++;
+        if (bandaLarga.getValor() > 0) count++;
+        if (tvPorAssinatura.getValor() > 0) count++;
+        return count;
+    }
+}
+
+public class CalculadorCombo {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Ler os valores dos serviços
+        String[] valoresServicos = scanner.nextLine().split(",");
+        double valorTelefonia = Double.parseDouble(valoresServicos[0]);
+        double valorBandaLarga = Double.parseDouble(valoresServicos[1]);
+        double valorTV = Double.parseDouble(valoresServicos[2]);
+
+        // Ler os percentuais de desconto
+        String[] descontos = scanner.nextLine().split(",");
+        double desconto1 = Double.parseDouble(descontos[0]);
+        double desconto2 = Double.parseDouble(descontos[1]);
+        double desconto3 = Double.parseDouble(descontos[2]);
+
+        // Criar o objeto Combo e calcular o valor total
+        Combo combo = new Combo(valorTelefonia, valorBandaLarga, valorTV, desconto1, desconto2, desconto3);
+        double valorTotal = combo.calcularValorTotal();
+
+        // Imprimir o resultado com duas casas decimais
+        System.out.printf("%.2f\n", valorTotal);
+
+        scanner.close();
+    }
+}
